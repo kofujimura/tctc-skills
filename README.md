@@ -33,4 +33,4 @@ SKILL.md-compatible agents). The skill teaches the agent to:
 
 ## License
 
-Apache-2.0
+MIT
