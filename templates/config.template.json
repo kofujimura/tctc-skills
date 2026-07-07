@@ -1,0 +1,37 @@
+{
+  "$comment": "tctc-mcp config template. Replace the placeholders; ${ENV_VAR} values are substituted from the environment at load time. NEVER put private keys here — admin mode reads TCTC_ADMIN_PRIVATE_KEY from the environment.",
+
+  "chains": {
+    "sepolia": {
+      "chainId": 11155111,
+      "rpcUrl": "https://ethereum-sepolia-rpc.publicnode.com"
+    }
+  },
+  "defaultChain": "sepolia",
+
+  "self": { "address": "0xYourAgentAddress" },
+
+  "roles": {
+    "MINTER_ROLE": {
+      "description": "What this role allows, and on which target contract",
+      "controlTokens": [
+        {
+          "chain": "sepolia",
+          "standard": "erc1155",
+          "address": "0xYourControlTokenContract",
+          "typeId": 1
+        }
+      ],
+      "admin": {
+        "grant": {
+          "function": "mint(address,uint256,uint256)",
+          "args": ["$subject", "$typeId", 1]
+        },
+        "revoke": {
+          "function": "burnByIssuer(address,uint256,uint256)",
+          "args": ["$subject", "$typeId", 1]
+        }
+      }
+    }
+  }
+}
