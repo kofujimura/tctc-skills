@@ -65,6 +65,20 @@ TCTC roles as MCP tools. Requirements: Node.js >= 20.
    you have access to an issuer key, unless the principal explicitly asks.
 4. `check_role` is advisory; the on-chain modifier is the enforcement point.
    Treat a positive check as "allowed right now", not as a guarantee.
+5. If the principal has configured a pre-action validator (a
+   `validate_action` server — see
+   [tctc-mcp#1](https://github.com/kofujimura/tctc-mcp/issues/1)), the
+   mandatory order is: `check_role` → build the transaction →
+   `validate_action` → send. `check_role` gates the action *class*; the
+   validator judges the specific *instance*. Then:
+   - never send a transaction tuple `(chainId, target, value, calldata)`
+     that the validator did not bind and allow;
+   - if anything in the tuple changes after validation, rebuild and
+     revalidate — a stale verdict binds nothing;
+   - treat a reduced-confidence binding (`binding.state ≠ "verified"`) as
+     a denial, unless the principal's config explicitly opts this role
+     into accepting the named gap;
+   - fail closed: if the validator is unreachable, do not send.
 
 ## Gating your own contracts (for developers)
 
